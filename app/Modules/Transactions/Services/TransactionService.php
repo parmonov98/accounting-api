@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Modules\Transactions\Mail\TransactionCreatedMail;
 use Illuminate\Pagination\LengthAwarePaginator;
 
+//TODO: nima uchun faqat test uchunmi
 final class TransactionService implements TransactionServiceInterface
 {
     public function __construct(
@@ -33,14 +34,14 @@ final class TransactionService implements TransactionServiceInterface
 
     /**
      * Create a new transaction
-     * 
+     *
      * @throws TransactionException
      */
     public function create(TransactionDTO $dto): Transaction
     {
         try {
             $transaction = $this->repository->create($dto);
-            
+
             // Log the transaction
             Log::info('Transaction created', [
                 'id' => $transaction->id,
@@ -66,7 +67,7 @@ final class TransactionService implements TransactionServiceInterface
 
     /**
      * Delete a transaction
-     * 
+     *
      * @throws TransactionException
      */
     public function delete(int $transactionId, int $userId): bool
@@ -83,7 +84,7 @@ final class TransactionService implements TransactionServiceInterface
 
     /**
      * Get transaction summary for a user
-     * 
+     *
      * @throws TransactionException
      */
     public function getSummary(int $userId, ?array $dateRange = null): array

@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class TransactionRepository implements TransactionRepositoryInterface
 {
+    //TODO: filter aohida class
     public function getAllForUser(int $userId, array $filters = []): LengthAwarePaginator
     {
         // Start with a query that only gets the user's transactions
@@ -62,7 +63,7 @@ class TransactionRepository implements TransactionRepositoryInterface
         if (isset($filters['sort'])) {
             $direction = $filters['sort']['direction'] ?? 'desc';
             $field = $filters['sort']['field'] ?? 'created_at';
-            
+
             if ($field === 'amount') {
                 $query->orderByRaw('CASE WHEN amount < 0 THEN -amount ELSE amount END ' . $direction);
             } else {
@@ -78,7 +79,7 @@ class TransactionRepository implements TransactionRepositoryInterface
         ]);
 
         $result = $query->paginate(15);
-        
+
         // Log the result count
         \Log::info('Query result', [
             'total' => $result->total(),

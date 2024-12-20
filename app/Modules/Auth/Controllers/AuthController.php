@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Auth\Controllers;
 
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Controllers\Controller;
 use App\Modules\Auth\Requests\LoginRequest;
 use App\Modules\Auth\Requests\RegisterRequest;
@@ -14,7 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Modules\Auth\Models\User;
 
 
-final class AuthController extends Controller
+final class AuthController extends BaseApiController
 {
     public function __construct(
         private AuthService $authService
@@ -27,7 +28,7 @@ final class AuthController extends Controller
             $request->validated()
         );
 
-        return new JsonResponse(['data' => $result], 201);
+        return $this->responseWithData($result, 201);
     }
 
     public function login(LoginRequest $request): JsonResponse

@@ -4,14 +4,15 @@ namespace App\Modules\Currency\Drivers;
 
 class AverageDriver extends AbstractDriver
 {
+    //TODO: to enum
     protected string $cacheKey = 'currency_rates_average';
     protected array $drivers;
-    
+
     public function __construct(array $drivers)
     {
         $this->drivers = $drivers;
     }
-    
+
     public function fetchRates(): array
     {
         $allRates = [];
@@ -24,12 +25,12 @@ class AverageDriver extends AbstractDriver
                 $allRates[$key][] = $rate;
             }
         }
-        
+
         $averageRates = [];
         foreach ($allRates as $key => $rates) {
             $averageRates[$key] = array_sum($rates) / count($rates);
         }
-        
+
         return $averageRates;
     }
 }
