@@ -86,6 +86,7 @@ class User extends Authenticatable
      */
     public function transactions(): HasMany
     {
+        //TODO: import qilinmagan
         return $this->hasMany(Transaction::class);
     }
 }

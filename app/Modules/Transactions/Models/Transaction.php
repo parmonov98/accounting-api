@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Scope;
 
+//TODO: Nimaga 2 ta model bitta clasda
 class AuthorScope implements Scope
 {
     public function apply(Builder $builder, Model $model)

@@ -19,6 +19,7 @@ use Illuminate\Http\Response;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 
+//TODO
 class TransactionController extends Controller
 {
     use AuthorizesRequests, ValidatesRequests;
@@ -37,6 +38,7 @@ class TransactionController extends Controller
         ]);
     }
 
+    //TODO
     public function store(StoreTransactionRequest $request): JsonResponse
     {
         $transactionDTO = new TransactionDTO(
