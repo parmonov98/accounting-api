@@ -12,7 +12,7 @@ use Illuminate\Testing\Fluent\AssertableJson;
 
 class AuthenticationTest extends TestCase
 {
-    // use RefreshDatabase;
+    use RefreshDatabase;
 
     public function test_user_can_register(): void
     {
@@ -25,25 +25,24 @@ class AuthenticationTest extends TestCase
         ];
 
         // Act
-        $response = $this->postJson('/api/register', $userData);
+        $response = $this->postJson('/api/auth/register', $userData);
 
         // Assert
         $response
             ->assertStatus(201)
             ->assertJson(fn (AssertableJson $json) =>
-                $json
-                    ->has('data.user', fn ($json) =>
-                        $json->where('name', $userData['name'])
-                            ->where('email', $userData['email'])
-                            ->whereType('id', 'integer')
-                            ->whereType('created_at', 'string')
-                            ->whereType('updated_at', 'string')
-                            ->whereType('last_seen', ['string', 'null'])
-                            ->missing('password')
-                            ->missing('remember_token')
-                    )
-                    ->has('data.token')
-                    ->whereType('data.token', 'string')
+                $json->has('user', fn ($json) =>
+                    $json->where('name', $userData['name'])
+                        ->where('email', $userData['email'])
+                        ->whereType('id', 'integer')
+                        ->whereType('created_at', 'string')
+                        ->whereType('updated_at', 'string')
+                        ->whereType('last_seen', ['string', 'null'])
+                        ->missing('password')
+                        ->missing('remember_token')
+                )
+                ->has('token')
+                ->whereType('token', 'string')
             );
 
         $this->assertDatabaseHas('users', [
@@ -65,7 +64,7 @@ class AuthenticationTest extends TestCase
         ];
 
         // Act
-        $response = $this->postJson('/api/register', $userData);
+        $response = $this->postJson('/api/auth/register', $userData);
 
         // Assert
         $response
@@ -87,25 +86,24 @@ class AuthenticationTest extends TestCase
         ];
 
         // Act
-        $response = $this->postJson('/api/login', $credentials);
+        $response = $this->postJson('/api/auth/login', $credentials);
 
         // Assert
         $response
             ->assertOk()
             ->assertJson(fn (AssertableJson $json) =>
-                $json
-                    ->has('data.user', fn ($json) =>
-                        $json->where('id', $user->id)
-                            ->where('name', $user->name)
-                            ->where('email', $user->email)
-                            ->whereType('created_at', 'string')
-                            ->whereType('updated_at', 'string')
-                            ->whereType('last_seen', ['string', 'null'])
-                            ->missing('password')
-                            ->missing('remember_token')
-                    )
-                    ->has('data.token')
-                    ->whereType('data.token', 'string')
+                $json->has('user', fn ($json) =>
+                    $json->where('id', $user->id)
+                        ->where('name', $user->name)
+                        ->where('email', $user->email)
+                        ->whereType('created_at', 'string')
+                        ->whereType('updated_at', 'string')
+                        ->whereType('last_seen', ['string', 'null'])
+                        ->missing('password')
+                        ->missing('remember_token')
+                )
+                ->has('token')
+                ->whereType('token', 'string')
             );
     }
 
@@ -122,7 +120,7 @@ class AuthenticationTest extends TestCase
         ];
 
         // Act
-        $response = $this->postJson('/api/login', $credentials);
+        $response = $this->postJson('/api/auth/login', $credentials);
 
         // Assert
         $response
@@ -143,15 +141,13 @@ class AuthenticationTest extends TestCase
 
         // Act
         $response = $this->withHeader('Authorization', "Bearer {$token}")
-            ->postJson('/api/logout');
+            ->postJson('/api/auth/logout');
 
         // Assert
         $response
             ->assertOk()
             ->assertJson([
-                'data' => [
-                    'message' => 'Successfully logged out'
-                ]
+                'message' => 'Successfully logged out'
             ]);
 
         $this->assertDatabaseMissing('personal_access_tokens', [
@@ -162,7 +158,7 @@ class AuthenticationTest extends TestCase
     public function test_unauthenticated_user_cannot_logout(): void
     {
         // Act
-        $response = $this->postJson('/api/logout');
+        $response = $this->postJson('/api/auth/logout');
 
         // Assert
         $response->assertUnauthorized();
@@ -171,7 +167,7 @@ class AuthenticationTest extends TestCase
     public function test_registration_validation_rules(): void
     {
         // Act
-        $response = $this->postJson('/api/register', [
+        $response = $this->postJson('/api/auth/register', [
             'name' => '',
             'email' => 'not-an-email',
             'password' => 'short',
@@ -191,7 +187,7 @@ class AuthenticationTest extends TestCase
     public function test_login_validation_rules(): void
     {
         // Act
-        $response = $this->postJson('/api/login', [
+        $response = $this->postJson('/api/auth/login', [
             'email' => 'not-an-email',
             'password' => ''
         ]);

@@ -15,10 +15,14 @@ class TransactionSummaryResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $resource = is_array($this->resource) ? $this->resource : [];
+
         return [
-            'total_income' => $this->resource['total_income'],
-            'total_expense' => $this->resource['total_expense'],
-            'transaction_count' => $this->resource['transaction_count'],
+            'data' => [
+                'total_income' => $resource['total_income'] ?? 0,
+                'total_expense' => $resource['total_expense'] ?? 0,
+                'transaction_count' => $resource['transaction_count'] ?? 0,
+            ]
         ];
     }
 }

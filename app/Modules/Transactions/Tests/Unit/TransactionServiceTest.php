@@ -122,14 +122,13 @@ class TransactionServiceTest extends TestCase
     {
         // Arrange
         $transactionId = 1;
-        $userId = 1;
 
         $this->repository->shouldReceive('delete')
-            ->with($transactionId, $userId)
+            ->with($transactionId)
             ->andReturn(true);
 
         // Act
-        $result = $this->service->delete($transactionId, $userId);
+        $result = $this->service->delete($transactionId);
 
         // Assert
         $this->assertTrue($result);
@@ -139,15 +138,14 @@ class TransactionServiceTest extends TestCase
     {
         // Arrange
         $transactionId = 999;
-        $userId = 1;
 
         $this->repository->shouldReceive('delete')
-            ->with($transactionId, $userId)
+            ->with($transactionId)
             ->andThrow(new \Exception('Transaction not found'));
 
         // Assert & Act
         $this->expectException(TransactionException::class);
-        $this->service->delete($transactionId, $userId);
+        $this->service->delete($transactionId);
     }
 
     public function test_get_summary_returns_array()

@@ -14,7 +14,7 @@ interface TransactionServiceInterface
     
     public function create(TransactionDTO $dto): Transaction;
     
-    public function delete(int $transactionId, int $userId): bool;
+    public function delete(int $transactionId): bool;
     
     public function getSummary(int $userId, ?array $dateRange = null): array;
 }

@@ -22,26 +22,52 @@ class TransactionController extends Controller
 
     public function __construct(
         private readonly TransactionService $transactionService
-    ) {}
+    ) {
+    }
+
+    /**
+     * Apply middleware in the routes file instead of constructor
+     */
 
     public function index(IndexTransactionRequest $request): ResourceCollection
     {
-        return TransactionResource::collection(
-            $this->transactionService->getAllForUser($request->user()->id, $request->validated())
-        );
+        try {
+            $userId = $request->user()->id;
+            $filters = $request->validated();
+            $transactions = $this->transactionService->getAllForUser($userId, $filters);
+            return TransactionResource::collection($transactions);
+        } catch (\Exception $e) {
+            \Log::error('Error getting transactions', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'user_id' => $request->user()->id ?? null
+            ]);
+            throw $e;
+        }
     }
 
     public function store(StoreTransactionRequest $request): TransactionResource
     {
-        $transactionDTO = new TransactionDTO(
-            authorId: Auth::id(),
-            amount: $request->validated('amount'),
-            title: $request->validated('title')
-        );
+        try {
+            $userId = $request->user()->id;
+            $validated = $request->validated();
 
-        return TransactionResource::make(
-            $this->transactionService->create($transactionDTO)
-        );
+            $transactionDTO = new TransactionDTO(
+                authorId: $userId,
+                amount: $validated['amount'],
+                title: $validated['title']
+            );
+
+            $transaction = $this->transactionService->create($transactionDTO);
+            return TransactionResource::make($transaction);
+        } catch (\Exception $e) {
+            \Log::error('Error creating transaction', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'user_id' => $request->user()->id ?? null
+            ]);
+            throw $e;
+        }
     }
 
     public function destroy(int $id): TransactionResource
@@ -53,15 +79,33 @@ class TransactionController extends Controller
 
     public function summary(): TransactionSummaryResource
     {
-        return new TransactionSummaryResource(
-            $this->transactionService->getSummary(Auth::id())
-        );
+        try {
+            $userId = auth()->id();
+            $summary = $this->transactionService->getSummary($userId);
+            return new TransactionSummaryResource($summary);
+        } catch (\Exception $e) {
+            \Log::error('Error getting transaction summary', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'user_id' => auth()->id() ?? null
+            ]);
+            throw $e;
+        }
     }
 
     public function balance(): TransactionBalanceResource
     {
-        return new TransactionBalanceResource(
-            $this->transactionService->getBalance(Auth::id())
-        );
+        try {
+            $userId = auth()->id();
+            $balance = $this->transactionService->getBalance($userId);
+            return new TransactionBalanceResource($balance);
+        } catch (\Exception $e) {
+            \Log::error('Error getting transaction balance', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'user_id' => auth()->id() ?? null
+            ]);
+            throw $e;
+        }
     }
 }

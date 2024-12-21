@@ -8,6 +8,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class TransactionResource extends JsonResource
 {
+
+
     /**
      * Transform the resource into an array.
      *
@@ -16,18 +18,21 @@ class TransactionResource extends JsonResource
      */
     public function toArray($request): array
     {
-        if (!is_object($this->resource)) {
+        if (!$this->resource instanceof \App\Modules\Transactions\Models\Transaction) {
             return [];
         }
 
         return [
-            'id' => $this->resource->id,
-            'author_id' => $this->resource->author_id,
-            'title' => $this->resource->title,
-            'amount' => $this->resource->amount,
-            'type' => $this->resource->type,
-            'created_at' => $this->resource->created_at,
-            'updated_at' => $this->resource->updated_at,
+            'data' => [
+                'id' => $this->id,
+                'author_id' => $this->author_id,
+                'title' => $this->title,
+                'amount' => $this->amount,
+                'type' => $this->type->value,
+                'created_at' => $this->created_at,
+                'updated_at' => $this->updated_at,
+            ]
         ];
     }
+
 }
