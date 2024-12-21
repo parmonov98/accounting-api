@@ -8,7 +8,7 @@ use App\Modules\Auth\Models\User;
 use App\Modules\Auth\Contracts\UserRepositoryInterface;
 use Illuminate\Support\Facades\Hash;
 
-final class UserRepository implements UserRepositoryInterface
+final readonly class UserRepository implements UserRepositoryInterface
 {
     public function __construct(
         private User $model
@@ -37,5 +37,10 @@ final class UserRepository implements UserRepositoryInterface
     public function revokeCurrentToken(User $user): bool
     {
         return $user->currentAccessToken()->delete();
+    }
+
+    public function update(mixed $id, array $array)
+    {
+        return $this->model->findOrFail($id)->update($array);
     }
 }

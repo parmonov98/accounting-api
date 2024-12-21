@@ -15,4 +15,6 @@ interface UserRepositoryInterface
     public function createAuthToken(User $user, string $tokenName = 'auth_token'): string;
     
     public function revokeCurrentToken(User $user): bool;
+
+    public function update(mixed $id, array $array);
 }

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Modules\Transactions\DTOs;
 
-final class TransactionDTO
+final readonly class TransactionDTO
 {
     public function __construct(
-        public readonly int $authorId,
-        public readonly int $amount,
-        public readonly ?string $title = null,
+        public int $authorId,
+        public int $amount,
+        public ?string $title = null,
     ) {}
 
     public static function fromRequest(array $data): self

@@ -11,10 +11,15 @@ use Illuminate\Pagination\LengthAwarePaginator;
 interface TransactionRepositoryInterface
 {
     public function getAllForUser(int $userId, array $filters = []): LengthAwarePaginator;
-    
+
     public function create(TransactionDTO $dto): Transaction;
-    
-    public function delete(int $transactionId, int $userId): bool;
-    
+
+    public function delete(int $transactionId): bool;
+
     public function getSummary(int $userId, ?array $dateRange = null): array;
+
+    public function getTotalIncomeForUser(int $userId): float;
+
+    public function getTotalExpenseForUser(int $userId): float;
+
 }

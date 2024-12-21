@@ -11,19 +11,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Database\Eloquent\Scope;
-
-class AuthorScope implements Scope
-{
-    public function apply(Builder $builder, Model $model)
-    {
-        if (Auth::check()) {
-            $builder->where('author_id', Auth::id());
-        }
-    }
-}
 
 /**
  * @property int $id
