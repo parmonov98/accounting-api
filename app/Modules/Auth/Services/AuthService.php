@@ -9,14 +9,13 @@ use Illuminate\Support\Facades\Auth;
 use App\Modules\Auth\Contracts\UserRepositoryInterface;
 use Illuminate\Validation\ValidationException;
 
-final class AuthService
+final readonly class AuthService
 {
     public function __construct(
         private UserRepositoryInterface $userRepository
     ) {}
 
     /**
-     * @throws ValidationException
      */
     public function register(array $data): array
     {
@@ -24,8 +23,8 @@ final class AuthService
         $token = $this->userRepository->createAuthToken($user);
 
         return [
-            'user' => $user,
             'token' => $token,
+            'user' => $user
         ];
     }
 
@@ -53,6 +52,14 @@ final class AuthService
             'user' => $user,
             'token' => $token,
         ];
+    }
+
+
+    public function setLastSeen(int $userId): void
+    {
+        $this->userRepository->update($userId, [
+            'last_seen' => now(),
+        ]);
     }
 
     public function logout(User $user): bool

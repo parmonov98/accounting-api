@@ -2,6 +2,8 @@
 
 namespace App\Modules\Auth\Models;
 
+use App\Modules\Transactions\Models\Transaction;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -72,9 +74,9 @@ class User extends Authenticatable
     /**
      * Create a new factory instance for the model.
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
-    protected static function newFactory()
+    protected static function newFactory(): Factory
     {
         return \App\Modules\Auth\Database\Factories\UserFactory::new();
     }
@@ -82,7 +84,7 @@ class User extends Authenticatable
     /**
      * Get the transactions for the user.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Transaction>
+     * @return HasMany<Transaction>
      */
     public function transactions(): HasMany
     {

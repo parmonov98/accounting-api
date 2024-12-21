@@ -32,7 +32,7 @@ final class TransactionCreatedMail extends Mailable
             view: 'emails.transaction-created',
             with: [
                 'type' => $this->transaction->type->label(),
-                'amount' => abs((float)$this->transaction->amount),
+                'amount' => abs($this->transaction->amount),
                 'title' => $this->transaction->title,
                 'date' => $this->transaction->created_at->format('Y-m-d H:i:s')
             ],

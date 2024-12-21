@@ -26,4 +26,14 @@ class ExchangeRateFactory
             default => throw new \InvalidArgumentException("Driver [{$driver}] not supported."),
         };
     }
+
+    public function format(float $amount, string $fromCurrency = 'EUR', string $toCurrency = 'USD'): array
+    {
+        $rate = $this->driver()->getRate($fromCurrency, $toCurrency);
+        
+        return [
+            $fromCurrency => number_format($amount, 2),
+            $toCurrency => number_format($amount * $rate, 2)
+        ];
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Modules\Auth\Http\Middleware;
 
+use App\Modules\Auth\Services\AuthService;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,7 +18,7 @@ class LastSeenMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         if (Auth::check()) {
-            Auth::user()->update(['last_seen' => now()]);
+            app(AuthService::class)->setLastSeen(Auth::user());
         }
 
         return $next($request);

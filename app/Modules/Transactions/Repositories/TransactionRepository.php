@@ -62,7 +62,7 @@ class TransactionRepository implements TransactionRepositoryInterface
         if (isset($filters['sort'])) {
             $direction = $filters['sort']['direction'] ?? 'desc';
             $field = $filters['sort']['field'] ?? 'created_at';
-            
+
             if ($field === 'amount') {
                 $query->orderByRaw('CASE WHEN amount < 0 THEN -amount ELSE amount END ' . $direction);
             } else {
@@ -78,7 +78,7 @@ class TransactionRepository implements TransactionRepositoryInterface
         ]);
 
         $result = $query->paginate(15);
-        
+
         // Log the result count
         \Log::info('Query result', [
             'total' => $result->total(),
@@ -97,11 +97,9 @@ class TransactionRepository implements TransactionRepositoryInterface
         ]);
     }
 
-    public function delete(int $transactionId, int $userId): bool
+    public function delete(int $transactionId): bool
     {
-        $transaction = Transaction::where('id', $transactionId)
-            ->where('author_id', $userId)
-            ->firstOrFail();
+        $transaction = Transaction::findOrFail($transactionId);
 
         return $transaction->delete();
     }
@@ -139,5 +137,24 @@ class TransactionRepository implements TransactionRepositoryInterface
             'total_expense' => $totalExpense,
             'count' => $count
         ];
+    }
+
+    public function getTransaction(int $id)
+    {
+        return Transaction::findOrFail($id);
+    }
+
+    public function getTotalIncomeForUser(int $userId): float
+    {
+        return (float) Transaction::where('author_id', $userId)
+            ->where('amount', '>', 0)
+            ->sum('amount');
+    }
+
+    public function getTotalExpenseForUser(int $userId): float
+    {
+        return Transaction::where('author_id', $userId)
+            ->where('amount', '<', 0)
+            ->sum('amount');
     }
 }
